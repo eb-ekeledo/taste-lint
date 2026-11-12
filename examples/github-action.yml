@@ -1,0 +1,19 @@
+# Copy to .github/workflows/taste-lint.yml in your project.
+# Starts your site, grades it against DESIGN.md, and fails the build below 80.
+name: taste-lint
+on: [pull_request]
+jobs:
+  taste-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci && npm run build
+      - run: npx serve -s dist -l 3000 &
+      - run: git clone --depth 1 https://github.com/eb-ekeledo/taste-lint /tmp/taste-lint
+      - run: cd /tmp/taste-lint && npm install && npx playwright install --with-deps chromium
+      - run: node /tmp/taste-lint/scripts/measure.js --design DESIGN.md --url http://localhost:3000 --out taste-lint --threshold 80
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: taste-lint-report, path: taste-lint }

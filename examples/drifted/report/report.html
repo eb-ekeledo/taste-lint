@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>taste-lint report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #ECEBE8; color: #111; font: 400 14px/1.45 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { width: 1200px; padding: 48px 56px 56px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-weight: 500; }
+  .kicker { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6B6A66; margin: 0 0 10px; }
+  .top { display: grid; grid-template-columns: 300px 1fr; gap: 24px; margin-bottom: 24px; }
+  .panel { background: #FAFAF9; border-radius: 20px; box-shadow: inset 0 1px 0 #fff, 0 0 0 1px #E2E0DB, 0 8px 24px rgba(40,36,30,.06); padding: 28px; }
+  .score { font-size: 120px; line-height: .9; font-weight: 650; letter-spacing: -.05em; font-variant-numeric: tabular-nums; margin: 6px 0 14px; }
+  .verdict { display: inline-block; font-size: 12px; padding: 6px 10px; border-radius: 999px; background: #D93036; color: #fff; }
+  h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.02em; font-weight: 650; }
+  .sub { color: #6B6A66; margin: 0 0 22px; }
+  .bars { display: grid; gap: 14px; }
+  .bar { display: grid; grid-template-columns: 90px 1fr 70px; align-items: center; gap: 14px; }
+  .track { height: 10px; border-radius: 5px; background: #E6E4E0; overflow: hidden; }
+  .fill { height: 100%; border-radius: 5px; background: #111; }
+  .fill.low { background: #D93036; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; color: #6B6A66; font-size: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .f { background: #FAFAF9; border-radius: 16px; box-shadow: 0 0 0 1px #E2E0DB; overflow: hidden; display: flex; flex-direction: column; }
+  .crop { background: #fff; height: 132px; display: grid; place-items: center; overflow: hidden; border-bottom: 1px solid #E8E6E1; }
+  .crop img { max-width: 100%; max-height: 132px; object-fit: contain; }
+  .fb { padding: 14px 16px 16px; }
+  .tag { font-size: 11px; color: #D93036; letter-spacing: .06em; text-transform: uppercase; }
+  .fb p { margin: 4px 0 6px; font-weight: 550; }
+  .fix { color: #6B6A66; font-size: 13px; }
+  .fix::before { content: '→ '; }
+  .clean { padding: 40px; text-align: center; color: #6B6A66; }
+</style></head><body><div class="wrap">
+  <div class="top">
+    <div class="panel"><p class="kicker mono">taste-lint</p><div class="score">73</div><span class="verdict mono">Below 80</span></div>
+    <div class="panel"><h1>Margin · DESIGN.md check</h1><p class="sub">11 distinct problems across 34 elements · 1280px</p>
+      <div class="bars"><div class="bar"><span>Colour</span><div class="track"><div class="fill " style="width:76%"></div></div><span class="num mono">76 · 2</span></div><div class="bar"><span>Type</span><div class="track"><div class="fill low" style="width:64%"></div></div><span class="num mono">64 · 3</span></div><div class="bar"><span>Spacing</span><div class="track"><div class="fill " style="width:76%"></div></div><span class="num mono">76 · 2</span></div><div class="bar"><span>Radius</span><div class="track"><div class="fill " style="width:76%"></div></div><span class="num mono">76 · 2</span></div><div class="bar"><span>Contrast</span><div class="track"><div class="fill " style="width:76%"></div></div><span class="num mono">76 · 2</span></div></div>
+    </div>
+  </div>
+  <div class="grid"><div class="f"><div class="crop"><img src="evidence/1.png"></div><div class="fb"><span class="tag mono">Type · 700</span><p>Font weight 700 on a isn't used in DESIGN.md</p><span class="fix">Use 650</span></div></div><div class="f"><div class="crop"><img src="evidence/2.png"></div><div class="fb"><span class="tag mono">Spacing · 40px</span><p>Spacing 40px on section.hero is off the scale</p><span class="fix">Use spacing.2xl (32px)</span></div></div><div class="f"><div class="crop"><img src="evidence/3.png"></div><div class="fb"><span class="tag mono">Colour · #3B82F6</span><p>Off-palette background colour #3B82F6 on a.btn</p><span class="fix">Use colors.accent (#C2410C)</span></div></div><div class="f"><div class="crop"><img src="evidence/4.png"></div><div class="fb"><span class="tag mono">Contrast · #FFFFFF on #3B82F6</span><p>Text &quot;Start writing&quot; is 3.68:1, needs 4.5:1</p><span class="fix">Use colors.ink (#141413) on this background</span></div></div><div class="f"><div class="crop"><img src="evidence/5.png"></div><div class="fb"><span class="tag mono">Colour · #D1D5DB</span><p>Off-palette border colour #D1D5DB on span.chip</p><span class="fix">Use colors.line (#E4E2DD)</span></div></div><div class="f"><div class="crop"><img src="evidence/6.png"></div><div class="fb"><span class="tag mono">Radius · 4px</span><p>Corner radius 4px on span.chip isn't a rounded token</p><span class="fix">Use rounded.sm (6px)</span></div></div><div class="f"><div class="crop"><img src="evidence/7.png"></div><div class="fb"><span class="tag mono">Spacing · 18px</span><p>Spacing 18px on article.card is off the scale</p><span class="fix">Use spacing.lg (16px)</span></div></div><div class="f"><div class="crop"><img src="evidence/8.png"></div><div class="fb"><span class="tag mono">Radius · 12px</span><p>Corner radius 12px on article.card isn't a rounded token</p><span class="fix">Use rounded.md (10px)</span></div></div><div class="f"><div class="crop"><img src="evidence/9.png"></div><div class="fb"><span class="tag mono">Type · 19px</span><p>Font size 19px on h3 isn't on the type scale</p><span class="fix">Use typography.title (18px)</span></div></div><div class="f"><div class="crop"><img src="evidence/10.png"></div><div class="fb"><span class="tag mono">Type · Georgia</span><p>Font Georgia on p isn't in DESIGN.md</p><span class="fix">Use Inter</span></div></div><div class="f"><div class="crop"><img src="evidence/11.png"></div><div class="fb"><span class="tag mono">Contrast · #5E5D59 on #C2410C</span><p>Text &quot;Your next draft is waiti&quot; is 1.27:1, needs 4.5:1</p><span class="fix">Use colors.accent-ink (#FFFFFF) on this background</span></div></div></div>
+</div></body></html>

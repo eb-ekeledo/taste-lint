@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Margin: notes for people who think in drafts</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F4F3F0; color: #141413; font: 400 15px/1.5 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 32px; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; }
+  .logo { font-weight: 650; font-size: 18px; letter-spacing: -0.02em; }
+  .links { display: flex; gap: 24px; }
+  .links a { color: #5E5D59; text-decoration: none; font-size: 13px; font-weight: 500; }
+  .hero { padding: 64px 0 48px; margin-bottom: 0; }
+  .kicker { font: 500 12px/1 "JetBrains Mono", ui-monospace, monospace; color: #5E5D59; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 16px; }
+  h1 { font-size: 44px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 650; margin: 0 0 16px; max-width: 640px; }
+  .lede { color: #5E5D59; max-width: 520px; margin: 0 0 32px; }
+  .row { display: flex; gap: 12px; align-items: center; }
+  .btn { display: inline-block; background: #C2410C; color: #FFFFFF; font-weight: 500; font-size: 15px; padding: 12px 24px; border-radius: 10px; text-decoration: none; }
+  .btn.ghost { background: #FFFFFF; color: #141413; box-shadow: inset 0 0 0 1px #E4E2DD; }
+  .chip { display: inline-block; font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #E4E2DD; color: #5E5D59; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; padding: 24px; }
+  .card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: #5E5D59; }
+  .quote { margin: 48px 0; padding: 32px; background: #FFFFFF; border: 1px solid #E4E2DD; border-radius: 16px; }
+  .quote p { margin: 0 0 12px; font-family: Inter, system-ui, sans-serif; font-size: 18px; font-weight: 400; }
+  .quote span { font: 500 12px/1 "JetBrains Mono", ui-monospace, monospace; color: #5E5D59; }
+  .band { background: #C2410C; border-radius: 16px; padding: 32px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 64px; }
+  .band p { margin: 0; color: #FFFFFF; font-weight: 600; font-size: 18px; }
+  .band .btn { background: #FFFFFF; color: #141413; }
+  footer { padding: 24px 0 48px; color: #5E5D59; font-size: 13px; border-top: 1px solid #E4E2DD; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <span class="logo">Margin</span>
+      <div class="links"><a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a><a href="#">Sign in</a></div>
+    </nav>
+    <section class="hero">
+      <p class="kicker">Notes · v4</p>
+      <h1>Notes for people who think in drafts.</h1>
+      <p class="lede">Write messy, keep every version, and pull the good lines into something finished. Margin remembers the path, not just the result.</p>
+      <div class="row"><a class="btn" href="#">Start writing</a><a class="btn ghost" href="#">See how it works</a><span class="chip">Free for 30 days</span></div>
+    </section>
+    <section class="grid">
+      <article class="card"><h3>Every draft, kept</h3><p>Scrub back through a note like a timeline and restore any sentence you cut.</p></article>
+      <article class="card"><h3>Pull lines forward</h3><p>Drag a line from an old draft into the new one. Margin keeps the link.</p></article>
+      <article class="card"><h3>Quiet by default</h3><p>No streaks, no badges, no red dots. Just the page and your words.</p></article>
+    </section>
+    <section class="quote">
+      <p>"The first tool that treats my bad drafts as part of the work."</p>
+      <span>Lena Ortiz · essayist</span>
+    </section>
+    <section class="band"><p>Your next draft is waiting.</p><a class="btn" href="#">Start writing</a></section>
+    <footer>Margin Labs · Made for writers</footer>
+  </div>
+</body>
+</html>

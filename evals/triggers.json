@@ -1,0 +1,28 @@
+{
+  "skill": "taste-lint",
+  "target": "At least 9 of 10 on each side",
+  "should_trigger": [
+    "does this page follow our DESIGN.md?",
+    "check the landing page for design drift",
+    "grade this UI against our design system",
+    "find off-brand colours on the pricing page",
+    "lint the dashboard's design before we ship",
+    "is the spacing consistent with our tokens?",
+    "run taste-lint on localhost:3000",
+    "are we using the right fonts everywhere?",
+    "how far has the app drifted from the system?",
+    "audit this page against DESIGN.md"
+  ],
+  "should_not_trigger": [
+    "write a DESIGN.md for me",
+    "run ESLint",
+    "review this PR's logic",
+    "suggest a new type scale",
+    "check page speed",
+    "make the hero more premium",
+    "add dark mode tokens",
+    "fix the failing unit test",
+    "generate a colour palette",
+    "show every state of this button"
+  ]
+}

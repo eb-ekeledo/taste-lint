@@ -1,0 +1,11 @@
+{
+  "name": "taste-lint",
+  "owner": { "name": "Ebere", "url": "https://ebere.design" },
+  "plugins": [
+    {
+      "name": "taste-lint",
+      "source": "./",
+      "description": "Grades your UI against your DESIGN.md and shows you exactly what drifted."
+    }
+  ]
+}
