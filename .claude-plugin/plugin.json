@@ -1,6 +1,6 @@
 {
   "name": "taste-lint",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "Screenshots your UI and grades it against your DESIGN.md: off-palette colours, off-scale spacing, rogue radii, type drift and contrast, as a report card with fixes.",
   "author": { "name": "Ebere", "url": "https://ebere.design" },
   "homepage": "https://github.com/eb-ekeledo/taste-lint",

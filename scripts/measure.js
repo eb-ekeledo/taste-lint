@@ -5,7 +5,8 @@
  *   node scripts/measure.js --design DESIGN.md --url http://localhost:3000 --out taste-lint
  *   node scripts/measure.js --design DESIGN.md --html page.html --out taste-lint
  *
- * Options: --width 1280  --threshold 80 (exit 1 below)  --routes /,/pricing (with --url)
+ * Options: --widths 375,1280 (or --width 1280)  --threshold 80 (exit 1 below)  --routes /,/pricing (with --url)
+ *          --ignore ".chat-widget,iframe"  (elements inside [data-taste-lint-ignore] are always skipped)
  * Writes report.json, report.html, report.png and evidence crops to the out folder.
  */
 const fs = require('fs');
@@ -24,7 +25,8 @@ const designPath = arg('design', 'DESIGN.md');
 const url = arg('url');
 const html = arg('html');
 const outDir = arg('out', 'taste-lint');
-const width = Number(arg('width', 1280));
+const widths = arg('widths', arg('width', '1280')).split(',').map(Number).filter(Boolean);
+const ignore = ['[data-taste-lint-ignore]', ...(arg('ignore', '') ? arg('ignore').split(',').map((x) => x.trim()) : [])].join(',');
 const threshold = Number(arg('threshold', 80));
 const routes = arg('routes', '/').split(',');
 
@@ -34,6 +36,7 @@ if (!url && !html) {
 }
 
 const tokens = load(designPath);
+for (const b of tokens.broken) console.warn(`DESIGN.md: ${b.where} points at ${b.ref}, which doesn't exist`);
 fs.mkdirSync(path.join(outDir, 'evidence'), { recursive: true });
 
 // Category weights for the overall score. The measure pass is deterministic.
@@ -61,16 +64,19 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
 
 (async () => {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: 2 });
+  const page = await browser.newPage({ viewport: { width: widths[0], height: 900 }, deviceScaleFactor: 2 });
   const findings = new Map(); // key -> finding
   let checked = 0;
 
+  // Widest first, so evidence crops show the desktop layout unless a problem only exists on a narrow screen.
+  for (const width of [...widths].sort((a, b) => b - a)) {
+  await page.setViewportSize({ width, height: 900 });
   for (const route of routes) {
     const target = html ? 'file://' + path.resolve(html) : new URL(route, url).toString();
     await page.goto(target, { waitUntil: 'networkidle' }).catch(() => page.goto(target, { waitUntil: 'load' }));
     await page.waitForTimeout(300);
 
-    const els = await page.evaluate(() => {
+    const els = await page.evaluate((ignore) => {
       const parse = (s) => { const m = s && s.match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
       const out = [];
       let id = 0;
@@ -83,6 +89,7 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
       };
       for (const el of document.querySelectorAll('body, body *')) {
         if (['SCRIPT', 'STYLE', 'LINK', 'META', 'BR'].includes(el.tagName)) continue;
+        if (el.closest(ignore)) continue;
         const r = el.getBoundingClientRect();
         const cs = getComputedStyle(el);
         if (r.width === 0 || r.height === 0 || cs.visibility === 'hidden' || cs.display === 'none') continue;
@@ -99,6 +106,8 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
           family: hasText ? cs.fontFamily.split(',')[0].replace(/["']/g, '').trim() : null,
           size: hasText ? parseFloat(cs.fontSize) : null,
           weight: hasText ? Number(cs.fontWeight) : null,
+          lineHeight: hasText ? cs.lineHeight : null,
+          letterSpacing: hasText ? cs.letterSpacing : null,
           bold: Number(cs.fontWeight) >= 700,
           spacing: [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft, cs.marginTop, cs.marginBottom, cs.rowGap, cs.columnGap]
             .map((v) => parseFloat(v)).filter((v) => v > 0 && !Number.isNaN(v)),
@@ -107,19 +116,20 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
         });
       }
       return out;
-    });
+    }, ignore);
 
     const add = (category, value, el, detail, fix) => {
       const key = category + '|' + value;
-      if (!findings.has(key)) findings.set(key, { category, value, detail, fix, count: 0, examples: [], route });
+      if (!findings.has(key)) findings.set(key, { category, value, detail, fix, count: 0, examples: [], route, width, widths: [] });
       const f = findings.get(key);
       f.count++;
+      if (!f.widths.includes(width)) f.widths.push(width), f.widths.sort((a, b) => a - b);
       if (f.examples.length < 1) f.examples.push({ id: el.id, tag: el.tag, cls: el.cls, text: el.text, box: el.box });
     };
     const label = (el) => el.tag + (el.cls ? '.' + el.cls.split(' ')[0] : '');
 
     for (const el of els) {
-      checked++;
+      if (width === Math.max(...widths)) checked++;
       // Colour: every solid colour on the page must be within Delta E 2.3 of a token.
       for (const [kind, c] of [['text', el.color], ['background', el.bg], ['border', el.border]]) {
         if (!c || c.a < 1) continue;
@@ -141,6 +151,23 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
         if (tokens.weights.length && !tokens.weights.includes(el.weight)) {
           const w = tokens.weights.reduce((a, b) => (Math.abs(b - el.weight) < Math.abs(a - el.weight) ? b : a));
           add('type', String(el.weight), el, `Font weight ${el.weight} on ${label(el)} isn't used in DESIGN.md`, `Use ${w}`);
+        }
+        // Line height and letter spacing: only checked when every type token at this size defines them.
+        const atSize = tokens.type.filter((t) => t.size && Math.abs(t.size - el.size) <= 0.5);
+        const r3 = (v) => Math.round(v * 1000) / 1000;
+        if (atSize.length && atSize.every((t) => t.letterSpacing !== null)) {
+          const ls = el.letterSpacing === 'normal' ? 0 : parseFloat(el.letterSpacing) / el.size;
+          if (atSize.every((t) => Math.abs(t.letterSpacing - ls) > 0.005)) {
+            const t = atSize[0];
+            add('type', `${r3(ls)}em letter-spacing`, el, `Letter spacing ${r3(ls)}em on ${label(el)} doesn't match ${t.name}`, `Use ${t.name} letterSpacing (${t.letterSpacing}em)`);
+          }
+        }
+        if (atSize.length && atSize.every((t) => t.lineHeight !== null) && el.lineHeight !== 'normal') {
+          const lh = parseFloat(el.lineHeight) / el.size;
+          if (atSize.every((t) => Math.abs(t.lineHeight - lh) > 0.02)) {
+            const t = atSize[0];
+            add('type', `${Math.round(lh * 100) / 100} line-height`, el, `Line height ${Math.round(lh * 100) / 100} on ${label(el)} doesn't match ${t.name}`, `Use ${t.name} lineHeight (${t.lineHeight})`);
+          }
         }
       }
       // Spacing: paddings, vertical margins and gaps must sit on the spacing scale.
@@ -180,13 +207,14 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
     // Evidence crops for this route.
     for (const f of findings.values()) {
       const ex = f.examples[0];
-      if (f.route !== route || f.crop || !ex) continue;
+      if (f.route !== route || f.width !== width || f.crop || !ex) continue;
       const pad = 16;
       const clip = { x: Math.max(0, ex.box.x - pad), y: Math.max(0, ex.box.y - pad), width: Math.min(ex.box.w + pad * 2, 900), height: Math.min(ex.box.h + pad * 2, 360) };
       const file = `evidence/${[...findings.keys()].indexOf(f.category + '|' + f.value) + 1}.png`;
       await page.screenshot({ path: path.join(outDir, file), clip, fullPage: true }).catch(() => {});
       f.crop = file;
     }
+  }
   }
 
   // ---------- score ----------
@@ -198,9 +226,10 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
   }
   const total = Math.round(Object.entries(WEIGHTS).reduce((s, [c, w]) => s + cats[c].score * w, 0) / 100);
   const report = {
-    design: tokens.name, page: html || url, routes, width, score: total, threshold, pass: total >= threshold,
+    design: tokens.name, page: html ? path.relative(process.cwd(), path.resolve(html)) : url, routes, widths, score: total, threshold, pass: total >= threshold,
     categories: cats, elementsChecked: checked,
-    findings: list.map(({ category, value, detail, fix, count, crop, examples }) => ({ category, value, detail, fix, count, crop, where: examples[0] && examples[0].text })),
+    designWarnings: tokens.broken.map((b) => `${b.where} points at ${b.ref}, which doesn't exist`),
+    findings: list.map(({ category, value, detail, fix, count, crop, examples, widths: at }) => ({ category, value, detail, fix, count, crop, where: examples[0] && examples[0].text, widths: at })),
   };
   fs.writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 
@@ -240,11 +269,11 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
 </style></head><body><div class="wrap">
   <div class="top">
     <div class="panel"><p class="kicker mono">taste-lint</p><div class="score">${total}</div><span class="verdict mono">${total >= threshold ? 'Pass' : 'Below ' + threshold}</span></div>
-    <div class="panel"><h1>${esc(tokens.name)} · DESIGN.md check</h1><p class="sub">${list.length ? list.length + ' distinct problems across ' + checked + ' elements' : 'No problems across ' + checked + ' elements'} · ${width}px</p>
+    <div class="panel"><h1>${esc(tokens.name)} · DESIGN.md check</h1><p class="sub">${list.length ? list.length + ' distinct problems across ' + checked + ' elements' : 'No problems across ' + checked + ' elements'} · ${widths.join(' and ')}px</p>
       <div class="bars">${order.map((c) => `<div class="bar"><span>${LABELS[c]}</span><div class="track"><div class="fill ${cats[c].score < 70 ? 'low' : ''}" style="width:${cats[c].score}%"></div></div><span class="num mono">${cats[c].score}${cats[c].problems ? ' · ' + cats[c].problems : ''}</span></div>`).join('')}</div>
     </div>
   </div>
-  ${list.length ? `<div class="grid">${list.slice(0, 12).map((f) => `<div class="f"><div class="crop">${f.crop ? `<img src="${f.crop}">` : ''}</div><div class="fb"><span class="tag mono">${LABELS[f.category]} · ${esc(f.value)}</span><p>${esc(f.detail)}</p><span class="fix">${esc(f.fix)}</span></div></div>`).join('')}</div>` : '<div class="panel clean">Everything on this page matches DESIGN.md.</div>'}
+  ${list.length ? `<div class="grid">${list.slice(0, 24).map((f) => `<div class="f"><div class="crop">${f.crop ? `<img src="${f.crop}">` : ''}</div><div class="fb"><span class="tag mono">${LABELS[f.category]} · ${esc(f.value)}${widths.length > 1 && f.widths.length < widths.length ? ' · ' + f.widths.join(', ') + 'px only' : ''}</span><p>${esc(f.detail)}</p><span class="fix">${esc(f.fix)}</span></div></div>`).join('')}</div>` : '<div class="panel clean">Everything on this page matches DESIGN.md.</div>'}
 </div></body></html>`;
   fs.writeFileSync(path.join(outDir, 'report.html'), card);
   const rp = await browser.newPage({ viewport: { width: 1200, height: 800 }, deviceScaleFactor: 1 });
@@ -253,7 +282,7 @@ const nearest = (list, value, dist) => list.reduce((best, t) => { const d = dist
   await browser.close();
 
   console.log(`taste-lint: ${total}/100 (${report.pass ? 'pass' : 'below ' + threshold}) · ${list.length} problems`);
-  for (const f of list) console.log(`  [${f.category}] ${f.detail} → ${f.fix}`);
+  for (const f of list) console.log(`  [${f.category}] ${f.detail}${widths.length > 1 && f.widths.length < widths.length ? ` (at ${f.widths.join(', ')}px)` : ''} → ${f.fix}`);
   console.log(`Report: ${path.join(outDir, 'report.html')}`);
   process.exit(report.pass ? 0 : 1);
 })().catch((e) => { console.error(e); process.exit(2); });

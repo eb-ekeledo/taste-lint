@@ -1,11 +1,14 @@
 {
   "design": "Margin",
-  "page": "/tmp/claude-0/-home-user/01c7f36a-358c-505e-b5d3-b1ba39b431f8/scratchpad/repos/taste-lint/examples/drifted/index.html",
+  "page": "examples/drifted/index.html",
   "routes": [
     "/"
   ],
-  "width": 1280,
-  "score": 73,
+  "widths": [
+    375,
+    1280
+  ],
+  "score": 65,
   "threshold": 80,
   "pass": false,
   "categories": {
@@ -14,12 +17,12 @@
       "score": 76
     },
     "type": {
-      "problems": 3,
-      "score": 64
+      "problems": 5,
+      "score": 40
     },
     "spacing": {
-      "problems": 2,
-      "score": 76
+      "problems": 3,
+      "score": 64
     },
     "radius": {
       "problems": 2,
@@ -31,105 +34,188 @@
     }
   },
   "elementsChecked": 34,
+  "designWarnings": [],
   "findings": [
     {
       "category": "type",
       "value": "700",
       "detail": "Font weight 700 on a isn't used in DESIGN.md",
       "fix": "Use 650",
-      "count": 4,
+      "count": 8,
       "crop": "evidence/1.png",
-      "where": "Features"
+      "where": "Features",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "spacing",
       "value": "40px",
       "detail": "Spacing 40px on section.hero is off the scale",
       "fix": "Use spacing.2xl (32px)",
-      "count": 1,
+      "count": 2,
       "crop": "evidence/2.png",
-      "where": ""
+      "where": "",
+      "widths": [
+        375,
+        1280
+      ]
+    },
+    {
+      "category": "type",
+      "value": "-0.01em letter-spacing",
+      "detail": "Letter spacing -0.01em on h1 doesn't match typography.display",
+      "fix": "Use typography.display letterSpacing (-0.03em)",
+      "count": 2,
+      "crop": "evidence/3.png",
+      "where": "Notes for people who think in drafts.",
+      "widths": [
+        375,
+        1280
+      ]
+    },
+    {
+      "category": "type",
+      "value": "1.2 line-height",
+      "detail": "Line height 1.2 on h1 doesn't match typography.display",
+      "fix": "Use typography.display lineHeight (1.05)",
+      "count": 2,
+      "crop": "evidence/4.png",
+      "where": "Notes for people who think in drafts.",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "color",
       "value": "#3B82F6",
       "detail": "Off-palette background colour #3B82F6 on a.btn",
       "fix": "Use colors.accent (#C2410C)",
-      "count": 1,
-      "crop": "evidence/3.png",
-      "where": "Start writing"
+      "count": 2,
+      "crop": "evidence/5.png",
+      "where": "Start writing",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "contrast",
       "value": "#FFFFFF on #3B82F6",
       "detail": "Text \"Start writing\" is 3.68:1, needs 4.5:1",
       "fix": "Use colors.ink (#141413) on this background",
-      "count": 1,
-      "crop": "evidence/4.png",
-      "where": "Start writing"
+      "count": 2,
+      "crop": "evidence/6.png",
+      "where": "Start writing",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "color",
       "value": "#D1D5DB",
       "detail": "Off-palette border colour #D1D5DB on span.chip",
       "fix": "Use colors.line (#E4E2DD)",
-      "count": 1,
-      "crop": "evidence/5.png",
-      "where": "Free for 30 days"
+      "count": 2,
+      "crop": "evidence/7.png",
+      "where": "Free for 30 days",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "radius",
       "value": "4px",
       "detail": "Corner radius 4px on span.chip isn't a rounded token",
       "fix": "Use rounded.sm (6px)",
-      "count": 1,
-      "crop": "evidence/6.png",
-      "where": "Free for 30 days"
+      "count": 2,
+      "crop": "evidence/8.png",
+      "where": "Free for 30 days",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "spacing",
       "value": "18px",
       "detail": "Spacing 18px on article.card is off the scale",
       "fix": "Use spacing.lg (16px)",
-      "count": 12,
-      "crop": "evidence/7.png",
-      "where": ""
+      "count": 24,
+      "crop": "evidence/9.png",
+      "where": "",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "radius",
       "value": "12px",
       "detail": "Corner radius 12px on article.card isn't a rounded token",
       "fix": "Use rounded.md (10px)",
-      "count": 3,
-      "crop": "evidence/8.png",
-      "where": ""
+      "count": 6,
+      "crop": "evidence/10.png",
+      "where": "",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "type",
       "value": "19px",
       "detail": "Font size 19px on h3 isn't on the type scale",
       "fix": "Use typography.title (18px)",
-      "count": 3,
-      "crop": "evidence/9.png",
-      "where": "Every draft, kept"
+      "count": 6,
+      "crop": "evidence/11.png",
+      "where": "Every draft, kept",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "type",
       "value": "Georgia",
       "detail": "Font Georgia on p isn't in DESIGN.md",
       "fix": "Use Inter",
-      "count": 1,
-      "crop": "evidence/10.png",
-      "where": "\"The first tool that treats my bad draft"
+      "count": 2,
+      "crop": "evidence/12.png",
+      "where": "\"The first tool that treats my bad draft",
+      "widths": [
+        375,
+        1280
+      ]
     },
     {
       "category": "contrast",
       "value": "#5E5D59 on #C2410C",
       "detail": "Text \"Your next draft is waiti\" is 1.27:1, needs 4.5:1",
       "fix": "Use colors.accent-ink (#FFFFFF) on this background",
-      "count": 1,
-      "crop": "evidence/11.png",
-      "where": "Your next draft is waiting."
+      "count": 2,
+      "crop": "evidence/13.png",
+      "where": "Your next draft is waiting.",
+      "widths": [
+        375,
+        1280
+      ]
+    },
+    {
+      "category": "spacing",
+      "value": "20px",
+      "detail": "Spacing 20px on div.wrap is off the scale",
+      "fix": "Use spacing.lg (16px)",
+      "count": 2,
+      "crop": "evidence/14.png",
+      "where": "",
+      "widths": [
+        375
+      ]
     }
   ]
 }

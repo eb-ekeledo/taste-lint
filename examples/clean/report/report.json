@@ -1,10 +1,13 @@
 {
   "design": "Margin",
-  "page": "/tmp/claude-0/-home-user/01c7f36a-358c-505e-b5d3-b1ba39b431f8/scratchpad/repos/taste-lint/examples/clean/index.html",
+  "page": "examples/clean/index.html",
   "routes": [
     "/"
   ],
-  "width": 1280,
+  "widths": [
+    375,
+    1280
+  ],
   "score": 100,
   "threshold": 80,
   "pass": true,
@@ -31,5 +34,6 @@
     }
   },
   "elementsChecked": 34,
+  "designWarnings": [],
   "findings": []
 }
