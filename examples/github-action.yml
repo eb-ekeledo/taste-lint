@@ -13,7 +13,7 @@ jobs:
       - run: npx serve -s dist -l 3000 &
       - run: git clone --depth 1 https://github.com/eb-ekeledo/taste-lint /tmp/taste-lint
       - run: cd /tmp/taste-lint && npm install && npx playwright install --with-deps chromium
-      - run: node /tmp/taste-lint/scripts/measure.js --design DESIGN.md --url http://localhost:3000 --out taste-lint --threshold 80
+      - run: node /tmp/taste-lint/scripts/measure.js --design DESIGN.md --url http://localhost:3000 --out taste-lint --widths 375,1280 --threshold 80
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: taste-lint-report, path: taste-lint }

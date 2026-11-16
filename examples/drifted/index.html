@@ -15,7 +15,7 @@
   .links a { color: #5E5D59; text-decoration: none; font-size: 13px; font-weight: 700; }
   .hero { padding: 64px 0 48px; margin-bottom: 40px; }
   .kicker { font: 500 12px/1 "JetBrains Mono", ui-monospace, monospace; color: #5E5D59; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 16px; }
-  h1 { font-size: 44px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 650; margin: 0 0 16px; max-width: 640px; }
+  h1 { font-size: 44px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 650; margin: 0 0 16px; max-width: 640px; }
   .lede { color: #5E5D59; max-width: 520px; margin: 0 0 32px; }
   .row { display: flex; gap: 12px; align-items: center; }
   .btn { display: inline-block; background: #3B82F6; color: #FFFFFF; font-weight: 500; font-size: 15px; padding: 12px 24px; border-radius: 10px; text-decoration: none; }
@@ -31,6 +31,8 @@
   .band { background: #C2410C; border-radius: 16px; padding: 32px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 64px; }
   .band p { margin: 0; color: #5E5D59; font-weight: 600; font-size: 18px; }
   .band .btn { background: #FFFFFF; color: #141413; }
+  .embed { margin: 0 0 24px; padding: 10px 14px; background: #6366F1; color: #FFFFFF; font: 500 14px/1.4 Arial, sans-serif; border-radius: 7px; }
+  @media (max-width: 600px) { .wrap { padding: 0 20px; } .grid { grid-template-columns: 1fr; } }
   footer { padding: 24px 0 48px; color: #5E5D59; font-size: 13px; border-top: 1px solid #E4E2DD; }
 </style>
 </head>
@@ -56,6 +58,8 @@
       <span>Lena Ortiz · essayist</span>
     </section>
     <section class="band"><p>Your next draft is waiting.</p><a class="btn" href="#">Start writing</a></section>
+    <!-- Third-party widget the team doesn't own: taste-lint skips it. -->
+    <div class="embed" data-taste-lint-ignore>Chat with us</div>
     <footer>Margin Labs · Made for writers</footer>
   </div>
 </body>

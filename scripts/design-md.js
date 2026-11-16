@@ -58,6 +58,29 @@ function parseYaml(text) {
   return root;
 }
 
+// Token references like "{colors.accent}" point at another value in the same file.
+// Resolve them in place (chains allowed), and collect any that point nowhere.
+function resolveRefs(root) {
+  const broken = [];
+  const lookup = (ref) => ref.split('.').reduce((o, k) => (o && typeof o === 'object' ? o[k] : undefined), root);
+  const resolve = (v, where, depth) => {
+    const m = typeof v === 'string' && v.trim().match(/^\{([\w.-]+)\}$/);
+    if (!m) return v;
+    const hit = lookup(m[1]);
+    if (hit === undefined || depth > 10) { broken.push({ where, ref: v.trim() }); return v; }
+    return resolve(hit, where, depth + 1);
+  };
+  const walk = (obj, prefix) => {
+    for (const [k, v] of Object.entries(obj)) {
+      const where = prefix ? prefix + '.' + k : k;
+      if (v && typeof v === 'object') walk(v, where);
+      else obj[k] = resolve(v, where, 0);
+    }
+  };
+  walk(root, '');
+  return broken;
+}
+
 function px(v) {
   if (typeof v === 'number') return v;
   const s = String(v).trim();
@@ -65,6 +88,31 @@ function px(v) {
   if (Number.isNaN(n)) return null;
   if (s.endsWith('rem') || s.endsWith('em')) return n * 16;
   return n;
+}
+
+// Line height as a multiple of the font size (1.05), whatever unit the file uses.
+function lineHeight(v, size) {
+  if (v === undefined || v === null || v === '') return null;
+  if (typeof v === 'number') return v;
+  const s = String(v).trim();
+  const n = parseFloat(s);
+  if (Number.isNaN(n)) return null;
+  if (s.endsWith('%')) return n / 100;
+  if (s.endsWith('px')) return size ? n / size : null;
+  if (s.endsWith('rem')) return size ? (n * 16) / size : null;
+  return n; // unitless or em
+}
+
+// Letter spacing in em, whatever unit the file uses.
+function letterSpacing(v, size) {
+  if (v === undefined || v === null || v === '') return null;
+  if (String(v).trim() === 'normal') return 0;
+  const s = String(v).trim();
+  const n = parseFloat(s);
+  if (Number.isNaN(n)) return null;
+  if (s.endsWith('px') || typeof v === 'number') return size ? n / size : null;
+  if (s.endsWith('rem')) return size ? (n * 16) / size : null;
+  return n; // em
 }
 
 function hexes(obj, prefix, out) {
@@ -87,6 +135,7 @@ function load(file) {
   const m = text.match(/^---\s*\n([\s\S]*?)\n---/);
   if (!m) throw new Error(file + ' has no YAML front matter (--- ... ---). See github.com/google-labs-code/design.md');
   const y = parseYaml(m[1]);
+  const broken = resolveRefs(y);
 
   const colors = hexes(y.colors, '', []);
   const type = Object.entries(y.typography || {}).map(([name, t]) => ({
@@ -94,6 +143,8 @@ function load(file) {
     family: String(t.fontFamily || t.family || '').split(',')[0].replace(/["']/g, '').trim(),
     size: px(t.fontSize || t.size),
     weight: Number(t.fontWeight || t.weight) || null,
+    lineHeight: lineHeight(t.lineHeight, px(t.fontSize || t.size)),
+    letterSpacing: letterSpacing(t.letterSpacing, px(t.fontSize || t.size)),
   }));
   const scale = (group, label) => Object.entries(y[group] || {})
     .map(([name, v]) => ({ name: label + '.' + name, px: px(v) }))
@@ -110,8 +161,9 @@ function load(file) {
     weights: [...new Set(type.map((t) => t.weight).filter(Boolean))],
     spacing,
     rounded,
+    broken,
     raw: y,
   };
 }
 
-module.exports = { load, parseYaml, normHex };
+module.exports = { load, parseYaml, normHex, resolveRefs };

@@ -1,6 +1,6 @@
 {
   "name": "taste-lint",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Grades your UI against your DESIGN.md.",
   "bin": { "taste-lint": "scripts/measure.js" },

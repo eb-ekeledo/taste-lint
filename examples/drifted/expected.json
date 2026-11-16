@@ -1,15 +1,70 @@
 {
-  "note": "10 planted violations. Each must be found; at most 1 other finding allowed.",
+  "note": "13 planted violations. Each must be found; at most 1 other finding allowed. The 20px padding only exists below 600px wide. The purple chat widget is marked data-taste-lint-ignore and must not be reported.",
   "seeded": [
-    { "category": "color", "value": "#3B82F6" },
-    { "category": "color", "value": "#D1D5DB" },
-    { "category": "spacing", "value": "18px" },
-    { "category": "spacing", "value": "40px" },
-    { "category": "radius", "value": "12px" },
-    { "category": "radius", "value": "4px" },
-    { "category": "type", "value": "19px" },
-    { "category": "type", "value": "700" },
-    { "category": "type", "value": "Georgia" },
-    { "category": "contrast", "value": "#5E5D59 on #C2410C" }
+    {
+      "category": "color",
+      "value": "#3B82F6"
+    },
+    {
+      "category": "color",
+      "value": "#D1D5DB"
+    },
+    {
+      "category": "spacing",
+      "value": "18px"
+    },
+    {
+      "category": "spacing",
+      "value": "40px"
+    },
+    {
+      "category": "radius",
+      "value": "12px"
+    },
+    {
+      "category": "radius",
+      "value": "4px"
+    },
+    {
+      "category": "type",
+      "value": "19px"
+    },
+    {
+      "category": "type",
+      "value": "700"
+    },
+    {
+      "category": "type",
+      "value": "Georgia"
+    },
+    {
+      "category": "contrast",
+      "value": "#5E5D59 on #C2410C"
+    },
+    {
+      "category": "type",
+      "value": "-0.01em letter-spacing"
+    },
+    {
+      "category": "type",
+      "value": "1.2 line-height"
+    },
+    {
+      "category": "spacing",
+      "value": "20px",
+      "widths": [
+        375
+      ]
+    }
+  ],
+  "ignored": [
+    {
+      "category": "color",
+      "value": "#6366F1"
+    },
+    {
+      "category": "type",
+      "value": "Arial"
+    }
   ]
 }
